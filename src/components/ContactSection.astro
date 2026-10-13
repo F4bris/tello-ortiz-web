@@ -7,55 +7,79 @@ import { SITE, SPECIALTIES } from '../data/site';
     <div class="contact__info">
       <span class="eyebrow">Contacto</span>
       <h2 class="section-title">Cuéntanos tu caso. Te orientamos sobre los siguientes pasos.</h2>
+      <p class="contact__lead">
+        Completa el formulario y te responderemos por WhatsApp a la brevedad, o escríbenos directamente.
+      </p>
 
       <dl class="contact__data">
-        <div>
+        <div class="contact__item">
           <dt>WhatsApp</dt>
           {SITE.whatsapp.map((w) => <dd>{w.label}</dd>)}
         </div>
-        <div>
+        <div class="contact__item">
           <dt>Correo</dt>
           <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
         </div>
-        <div>
+        <div class="contact__item">
           <dt>Horario</dt>
           {SITE.hours.map((h) => <dd>{h.days}: {h.time}</dd>)}
         </div>
-        <div>
+        <div class="contact__item">
           <dt>Atención</dt>
-          <dd>Presencial con cita previa y consultas virtuales</dd>
+          <dd>Presencial con cita previa</dd>
+          <dd>Consultas virtuales</dd>
         </div>
       </dl>
     </div>
 
-    <form class="form" id="contact-form" data-whatsapp={SITE.whatsapp[0].number}>
-      <label class="form__field">
-        Nombre completo
-        <input type="text" name="nombre" autocomplete="name" required />
-      </label>
-      <label class="form__field">
-        Teléfono / WhatsApp
-        <input type="tel" name="telefono" autocomplete="tel" required />
-      </label>
-      <label class="form__field">
-        Área de tu caso
-        <select name="area" required>
+    <!-- Sin backend: al enviar, arma el mensaje y abre WhatsApp -->
+    <form class="form" id="contact-form" data-whatsapp={SITE.whatsapp[0].number} novalidate>
+      <h3 class="form__title">Solicita tu consulta</h3>
+
+      <div class="form__row">
+        <div class="form__field">
+          <label for="nombre">Nombre completo</label>
+          <input id="nombre" type="text" name="nombre" autocomplete="name" required minlength="3"
+            aria-describedby="nombre-error" data-error="Ingresa tu nombre completo." />
+          <p class="form__error" id="nombre-error" aria-live="polite"></p>
+        </div>
+        <div class="form__field">
+          <label for="telefono">Teléfono / WhatsApp</label>
+          <input id="telefono" type="tel" name="telefono" autocomplete="tel" inputmode="tel" required
+            pattern="^(\+?51)?\s?9\d{2}\s?\d{3}\s?\d{3}$" placeholder="9XX XXX XXX"
+            aria-describedby="telefono-error" data-error="Ingresa un celular válido de 9 dígitos." />
+          <p class="form__error" id="telefono-error" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="form__field">
+        <label for="area">Área de tu caso</label>
+        <select id="area" name="area" required aria-describedby="area-error" data-error="Selecciona un área.">
+          <option value="" disabled selected>Selecciona una opción</option>
           {SPECIALTIES.map((s) => <option>{s.title}</option>)}
           <option>No estoy seguro</option>
         </select>
-      </label>
-      <label class="form__field">
-        Cuéntanos brevemente
-        <textarea name="mensaje" rows="4"></textarea>
-      </label>
-      <label class="form__check">
-        <input type="checkbox" name="consentimiento" required />
-        <span>
-          Acepto la <a href="/politica-de-privacidad">Política de Privacidad</a> y el tratamiento de mis datos
-          personales conforme a la Ley N.° 29733.
-        </span>
-      </label>
-      <button type="submit" class="btn btn--dark">Solicitar consulta</button>
+        <p class="form__error" id="area-error" aria-live="polite"></p>
+      </div>
+
+      <div class="form__field">
+        <label for="mensaje">Cuéntanos brevemente <span class="form__optional">(opcional)</span></label>
+        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+      </div>
+
+      <div class="form__field">
+        <label class="form__check">
+          <input type="checkbox" name="consentimiento" required aria-describedby="consentimiento-error"
+            data-error="Debes aceptar la Política de Privacidad para continuar." />
+          <span>
+            Acepto la <a href="/politica-de-privacidad">Política de Privacidad</a> y el tratamiento de mis datos
+            personales conforme a la Ley N.° 29733.
+          </span>
+        </label>
+        <p class="form__error" id="consentimiento-error" aria-live="polite"></p>
+      </div>
+
+      <button type="submit" class="btn btn--dark form__submit">Solicitar consulta</button>
       <p class="form__note">Tu información es confidencial y solo se usa para responder tu consulta.</p>
     </form>
   </div>
@@ -64,25 +88,30 @@ import { SITE, SPECIALTIES } from '../data/site';
 <style>
   .contact { background: var(--navy); color: var(--text-on-dark); }
 
-  .contact__inner { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 56px; }
-
-  .contact__info {
-    flex: 999 1 460px;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
+  .contact__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 72px;
+    align-items: start;
   }
+
+  .contact__info { display: flex; flex-direction: column; gap: 22px; }
+  .contact__lead { max-width: 440px; color: var(--text-on-dark-muted); }
 
   .contact__data {
     margin: 16px 0 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid rgba(201, 169, 116, 0.3);
+  }
+
+  .contact__item {
+    padding: 24px 24px 24px 0;
+    border-bottom: 1px solid rgba(201, 169, 116, 0.3);
   }
 
   .contact__data dt {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -90,18 +119,25 @@ import { SITE, SPECIALTIES } from '../data/site';
     color: var(--gold-light);
   }
 
-  .contact__data dd { margin: 0; }
+  .contact__data dd { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
   .contact__data a { text-decoration: none; }
 
   .form {
-    flex: 1 1 360px;
-    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    padding: 36px;
+    gap: 20px;
+    padding: clamp(28px, 4vw, 44px);
     background: var(--gray-100);
     color: var(--text);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+  }
+
+  .form__title { font-size: 28px; color: var(--navy); margin-bottom: 4px; }
+
+  .form__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
   }
 
   .form__field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
@@ -109,6 +145,7 @@ import { SITE, SPECIALTIES } from '../data/site';
   .form__field input,
   .form__field select,
   .form__field textarea {
+    width: 100%;
     min-height: 48px;
     padding: 12px 14px;
     border: 1px solid #c4c4c4;
@@ -119,7 +156,55 @@ import { SITE, SPECIALTIES } from '../data/site';
     font-weight: 400;
   }
 
+  .form__field input:focus,
+  .form__field select:focus,
+  .form__field textarea:focus {
+    border-color: var(--gold);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.2);
+  }
+
   .form__field textarea { resize: vertical; }
+
+  /* Evita el fondo azul del autocompletado del navegador */
+  .form__field input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
+    -webkit-text-fill-color: var(--text);
+  }
+
+  .form__optional { font-weight: 400; color: #6a6a6a; }
+
+  /* ===== Errores de validación ===== */
+  .form__error {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #a23b2a;
+  }
+
+  .form__error::before {
+    content: '';
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 7v6M12 17h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 7v6M12 17h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  .form__error:not(:empty) { display: flex; animation: error-in 0.2s ease-out; }
+
+  .form__field [aria-invalid='true'] { border-color: #a23b2a; background: #fdf6f4; }
+  .form__field [aria-invalid='true']:focus { box-shadow: 0 0 0 3px rgba(162, 59, 42, 0.15); }
+  .form__check input[aria-invalid='true'] { outline: 2px solid #a23b2a; outline-offset: 2px; }
+
+  @keyframes error-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
 
   .form__check {
     display: flex;
@@ -138,25 +223,70 @@ import { SITE, SPECIALTIES } from '../data/site';
     accent-color: var(--navy);
   }
 
-  .form__note { font-size: 12px; color: #5a5a5a; }
+  .form__submit { width: 100%; }
+  .form__note { font-size: 12px; color: #5a5a5a; text-align: center; }
+
+  @media (max-width: 960px) {
+    .contact__inner { grid-template-columns: 1fr; gap: 48px; }
+  }
+
+  @media (max-width: 520px) {
+    .contact__data,
+    .form__row { grid-template-columns: 1fr; }
+  }
 </style>
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
 
-  form?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const text = [
-      'Hola, quisiera agendar una consulta.',
-      `Nombre: ${data.get('nombre')}`,
-      `Teléfono: ${data.get('telefono')}`,
-      `Área: ${data.get('area')}`,
-      data.get('mensaje') ? `Detalle: ${data.get('mensaje')}` : '',
-    ]
-      .filter(Boolean)
-      .join('\n');
+  type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-    window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-  });
+  // Muestra u oculta el mensaje de error de un campo
+  const validateField = (field: Field) => {
+    const error = document.getElementById(`${field.name}-error`);
+    if (!error) return true;
+
+    const valid = field.checkValidity();
+    error.textContent = valid ? '' : field.dataset.error ?? 'Revisa este campo.';
+    field.setAttribute('aria-invalid', String(!valid));
+    return valid;
+  };
+
+  if (form) {
+    const fields = Array.from(form.querySelectorAll<Field>('[required]'));
+
+    // Revalida mientras el usuario corrige, solo si el campo ya mostró error
+    fields.forEach((field) => {
+      const event = field.type === 'checkbox' || field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(event, () => {
+        if (field.getAttribute('aria-invalid') === 'true') validateField(field);
+      });
+      field.addEventListener('blur', () => {
+        if (field.type !== 'checkbox' && field.value) validateField(field);
+      });
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const invalid = fields.filter((field) => !validateField(field));
+      if (invalid.length) {
+        invalid[0].focus();
+        return;
+      }
+
+      const data = new FormData(form);
+      const text = [
+        'Hola, quisiera agendar una consulta.',
+        `Nombre: ${data.get('nombre')}`,
+        `Teléfono: ${data.get('telefono')}`,
+        `Área: ${data.get('area')}`,
+        data.get('mensaje') ? `Detalle: ${data.get('mensaje')}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    });
+  }
 </script>
