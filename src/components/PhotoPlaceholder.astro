@@ -1,0 +1,31 @@
+---
+interface Props {
+  label: string;
+  dark?: boolean;
+}
+const { label, dark = false } = Astro.props;
+---
+
+<div class:list={['placeholder', { 'placeholder--dark': dark }]} role="img" aria-label={label}>
+  <span>{label}</span>
+</div>
+
+<style>
+  .placeholder {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    font-size: 14px;
+    background: #e6e6e6;
+    color: #6a6a6a;
+  }
+
+  .placeholder--dark {
+    background: var(--navy-700);
+    color: #8fa0a5;
+  }
+</style>

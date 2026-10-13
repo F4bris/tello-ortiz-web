@@ -1,0 +1,35 @@
+---
+import { whatsappUrl } from '../data/site';
+---
+
+<a href={whatsappUrl()} class="wa-button" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"></path>
+  </svg>
+</a>
+
+<style>
+  .wa-button {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 60;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+
+  .wa-button:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  @media (max-width: 520px) {
+    .wa-button { right: 16px; bottom: 16px; width: 56px; height: 56px; }
+  }
+</style>

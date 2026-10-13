@@ -1,0 +1,120 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { SITE, SPECIALTIES, LEGAL_LINKS, whatsappUrl } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Image src={logo} alt={SITE.name} height={72} />
+        <p>Asesoría y defensa legal en Lima desde {SITE.foundingYear}.</p>
+      </div>
+
+      <nav aria-label="Especialidades">
+        <h2 class="footer__title">Especialidades</h2>
+        <ul>
+          {SPECIALTIES.map((s) => <li><a href={`/especialidades/${s.slug}`}>{s.title}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer__title">Contacto</h2>
+        <ul>
+          {SITE.whatsapp.map((w) => <li><a href={whatsappUrl(w.number)}>WhatsApp {w.label}</a></li>)}
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          {SITE.hours.map((h) => <li class="footer__muted">{h.days}: {h.time}</li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__title">Síguenos</h2>
+        <ul>
+          <li><a href={SITE.social.tiktok} rel="noopener" target="_blank">TikTok</a></li>
+          <li><a href={SITE.social.facebook} rel="noopener" target="_blank">Facebook</a></li>
+          <li><a href={SITE.social.instagram} rel="noopener" target="_blank">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {SITE.name}. Todos los derechos reservados.</p>
+      <nav aria-label="Legal">
+        <ul class="footer__legal">
+          {LEGAL_LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+      <p class="footer__disclaimer">
+        La información de este sitio es referencial y no constituye asesoría legal. Cada caso requiere una
+        evaluación particular. El uso de este sitio o el envío de una consulta no genera una relación
+        abogado-cliente.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--navy-900); color: #a9b4b7; font-size: 14px; }
+
+  .footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer a { color: #d5dcde; text-decoration: none; }
+  .footer a:hover { color: var(--gold-light); }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 40px;
+    padding-block: 64px 48px;
+  }
+
+  .footer__brand img { height: 72px; width: auto; margin-bottom: 16px; }
+  .footer__brand p { max-width: 260px; line-height: 1.6; }
+
+  .footer__title {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+
+  .footer__muted { color: #8a979a; }
+
+  .footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: 24px 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+  }
+
+  .footer__legal { flex-direction: row !important; flex-wrap: wrap; gap: 20px !important; }
+  .footer__legal a { color: #a9b4b7; }
+
+  .footer__disclaimer { width: 100%; font-size: 12px; line-height: 1.6; color: #8a979a; }
+
+  @media (max-width: 860px) {
+    .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .footer__brand { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 520px) {
+    .footer__grid { grid-template-columns: 1fr; }
+  }
+</style>

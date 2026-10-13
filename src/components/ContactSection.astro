@@ -1,0 +1,162 @@
+---
+import { SITE, SPECIALTIES } from '../data/site';
+---
+
+<section id="contacto" class="section contact on-dark">
+  <div class="container contact__inner">
+    <div class="contact__info">
+      <span class="eyebrow">Contacto</span>
+      <h2 class="section-title">Cuéntanos tu caso. Te orientamos sobre los siguientes pasos.</h2>
+
+      <dl class="contact__data">
+        <div>
+          <dt>WhatsApp</dt>
+          {SITE.whatsapp.map((w) => <dd>{w.label}</dd>)}
+        </div>
+        <div>
+          <dt>Correo</dt>
+          <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+        </div>
+        <div>
+          <dt>Horario</dt>
+          {SITE.hours.map((h) => <dd>{h.days}: {h.time}</dd>)}
+        </div>
+        <div>
+          <dt>Atención</dt>
+          <dd>Presencial con cita previa y consultas virtuales</dd>
+        </div>
+      </dl>
+    </div>
+
+    <form class="form" id="contact-form" data-whatsapp={SITE.whatsapp[0].number}>
+      <label class="form__field">
+        Nombre completo
+        <input type="text" name="nombre" autocomplete="name" required />
+      </label>
+      <label class="form__field">
+        Teléfono / WhatsApp
+        <input type="tel" name="telefono" autocomplete="tel" required />
+      </label>
+      <label class="form__field">
+        Área de tu caso
+        <select name="area" required>
+          {SPECIALTIES.map((s) => <option>{s.title}</option>)}
+          <option>No estoy seguro</option>
+        </select>
+      </label>
+      <label class="form__field">
+        Cuéntanos brevemente
+        <textarea name="mensaje" rows="4"></textarea>
+      </label>
+      <label class="form__check">
+        <input type="checkbox" name="consentimiento" required />
+        <span>
+          Acepto la <a href="/politica-de-privacidad">Política de Privacidad</a> y el tratamiento de mis datos
+          personales conforme a la Ley N.° 29733.
+        </span>
+      </label>
+      <button type="submit" class="btn btn--dark">Solicitar consulta</button>
+      <p class="form__note">Tu información es confidencial y solo se usa para responder tu consulta.</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact { background: var(--navy); color: var(--text-on-dark); }
+
+  .contact__inner { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 56px; }
+
+  .contact__info {
+    flex: 999 1 460px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .contact__data {
+    margin: 16px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 28px;
+  }
+
+  .contact__data dt {
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+  }
+
+  .contact__data dd { margin: 0; }
+  .contact__data a { text-decoration: none; }
+
+  .form {
+    flex: 1 1 360px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 36px;
+    background: var(--gray-100);
+    color: var(--text);
+  }
+
+  .form__field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
+
+  .form__field input,
+  .form__field select,
+  .form__field textarea {
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #c4c4c4;
+    border-radius: var(--radius);
+    background: var(--white);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  .form__field textarea { resize: vertical; }
+
+  .form__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #3a3a3a;
+  }
+
+  .form__check input {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    flex-shrink: 0;
+    accent-color: var(--navy);
+  }
+
+  .form__note { font-size: 12px; color: #5a5a5a; }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const text = [
+      'Hola, quisiera agendar una consulta.',
+      `Nombre: ${data.get('nombre')}`,
+      `Teléfono: ${data.get('telefono')}`,
+      `Área: ${data.get('area')}`,
+      data.get('mensaje') ? `Detalle: ${data.get('mensaje')}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  });
+</script>

@@ -1,0 +1,175 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { NAV_LINKS, SITE } from '../data/site';
+
+const current = Astro.url.pathname;
+const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
+---
+
+<header class="header">
+  <nav class="header__nav container" aria-label="Principal">
+    <a href="/" class="header__logo" aria-label={`${SITE.name}, inicio`}>
+      <Image src={logo} alt={SITE.name} height={52} loading="eager" />
+    </a>
+
+    <button
+      class="header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu-principal"
+      aria-label="Abrir menú"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul id="menu-principal" class="header__menu">
+      {
+        NAV_LINKS.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="header__link"
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href="/contacto" class="header__cta" aria-current={isActive('/contacto') ? 'page' : undefined}>
+          Contacto
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    border-bottom: 1px solid rgba(176, 141, 87, 0.25);
+  }
+
+  .header__nav {
+    min-height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header__logo img { height: 52px; width: auto; }
+
+  .header__menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .header__link {
+    color: var(--text-on-dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding-block: 8px;
+    border-bottom: 1px solid transparent;
+  }
+
+  .header__link:hover,
+  .header__link[aria-current='page'] {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+  }
+
+  .header__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    color: var(--text-on-dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .header__cta:hover,
+  .header__cta[aria-current='page'] {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .header__toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 12px 10px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header__toggle span {
+    display: block;
+    height: 2px;
+    background: var(--text-on-dark);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  @media (max-width: 860px) {
+    .header__toggle { display: flex; }
+
+    .header__menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px var(--gutter) 24px;
+      background: var(--navy);
+      border-bottom: 1px solid rgba(176, 141, 87, 0.25);
+    }
+
+    .header__menu.is-open { display: flex; }
+
+    .header__link {
+      display: block;
+      padding: 14px 0;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header__cta { margin-top: 16px; justify-content: center; }
+
+    .header__toggle[aria-expanded='true'] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .header__toggle[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+    .header__toggle[aria-expanded='true'] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.header__toggle');
+  const menu = document.getElementById('menu-principal');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
+    menu?.classList.toggle('is-open', !open);
+  });
+</script>
