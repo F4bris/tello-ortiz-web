@@ -1,6 +1,7 @@
 ---
-import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import photo from '../../assets/images/dr-tello-ortiz.jpg';
 import { SITE, whatsappUrl } from '../../data/site';
+import { Image } from 'astro:assets';
 ---
 
 <section class="hero on-dark">
@@ -21,15 +22,47 @@ import { SITE, whatsappUrl } from '../../data/site';
     </div>
 
     <div class="hero__media">
-      <div class="hero__frame">
-        <PhotoPlaceholder label="Foto profesional del Dr. Tello Ortiz" dark />
-      </div>
-    </div>
+  <div class="hero__frame">
+    <Image
+      src={photo}
+      alt="Dr. Tello Ortiz, abogado del estudio Tello Ortiz"
+      widths={[380, 760]}
+      sizes="(max-width: 440px) 90vw, 380px"
+      class="hero__photo"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+</div>
   </div>
 </section>
 
 <style>
-  .hero { background: var(--navy); color: var(--text-on-dark); }
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--text-on-dark);
+    background:
+      radial-gradient(ellipse 55% 70% at 80% 35%, rgba(176, 141, 87, 0.2), transparent 65%),
+      radial-gradient(ellipse 60% 60% at 0% 100%, rgba(30, 55, 64, 0.95), transparent 70%),
+      var(--navy);
+  }
+
+  /* Cuadrícula fina que se desvanece hacia los bordes */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(243, 243, 243, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(243, 243, 243, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 80% at 70% 40%, #000 15%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 80% at 70% 40%, #000 15%, transparent 75%);
+  }
 
   .hero__inner {
     display: flex;
@@ -67,10 +100,22 @@ import { SITE, whatsappUrl } from '../../data/site';
 
   .hero__media { flex: 1 1 300px; display: flex; justify-content: center; }
 
+  /* Marco de cristal */
   .hero__frame {
     width: 100%;
     max-width: 380px;
     padding: 14px;
-    border: 1px solid rgba(176, 141, 87, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(201, 169, 116, 0.4);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero__photo {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 15%;
   }
 </style>
