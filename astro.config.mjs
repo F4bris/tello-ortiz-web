@@ -1,5 +1,9 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // Cambia por el dominio real cuando lo compren
+  site: 'https://www.telloortiz.pe',
+  trailingSlash: 'never',
+  integrations: [sitemap()],
+});
