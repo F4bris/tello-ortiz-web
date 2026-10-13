@@ -1,0 +1,99 @@
+---
+import { SPECIALTIES } from '../../data/site';
+---
+
+<section id="especialidades" class="section specialties">
+  <div class="container">
+    <div class="specialties__head">
+      <div class="specialties__heading">
+        <span class="eyebrow">Especialidades</span>
+        <h2 class="section-title">Áreas en las que te acompañamos</h2>
+      </div>
+      <p class="specialties__intro">
+        Cada área tiene su propia página con lo que analizamos y los servicios que ofrecemos.
+      </p>
+    </div>
+
+    <ul class="specialties__grid">
+      {
+        SPECIALTIES.map((s, i) => (
+          <li>
+            <a href={`/especialidades/${s.slug}`} class="card">
+              <span class="card__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="card__title">{s.title}</h3>
+              <p class="card__text">{s.summary}</p>
+              <span class="card__more">
+                Ver más
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .specialties { background: var(--gray-100); }
+
+  .specialties__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 56px;
+  }
+
+  .specialties__heading { display: flex; flex-direction: column; gap: 14px; max-width: 620px; }
+  .specialties__intro { max-width: 420px; color: var(--text-muted); }
+
+  .specialties__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 36px 30px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+  .card__num {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold-dark);
+  }
+
+  .card__title { font-size: 30px; color: var(--navy); }
+  .card__text { flex-grow: 1; font-size: 15px; color: var(--text-muted); }
+
+  .card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+</style>

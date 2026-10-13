@@ -1,0 +1,76 @@
+---
+import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import { SITE, whatsappUrl } from '../../data/site';
+---
+
+<section class="hero on-dark">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <span class="eyebrow hero__eyebrow">Estudio jurídico · Lima, desde {SITE.foundingYear}</span>
+      <h1 class="hero__title">Defendemos tus derechos con rigor y experiencia.</h1>
+      <p class="hero__text">
+        Asesoría y defensa legal en derecho penal, civil, laboral y registral. Analizamos tu caso con seriedad,
+        te explicamos tus opciones con claridad y te acompañamos en cada etapa del proceso.
+      </p>
+      <div class="hero__actions">
+        <a href="/contacto" class="btn btn--primary">Agenda tu consulta</a>
+        <a href={whatsappUrl()} class="btn btn--outline" target="_blank" rel="noopener">
+          Escríbenos por WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="hero__media">
+      <div class="hero__frame">
+        <PhotoPlaceholder label="Foto profesional del Dr. Tello Ortiz" dark />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { background: var(--navy); color: var(--text-on-dark); }
+
+  .hero__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 64px;
+    padding-block: clamp(80px, 12vw, 128px);
+  }
+
+  .hero__content {
+    flex: 999 1 520px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .hero__eyebrow { display: flex; align-items: center; gap: 14px; }
+  .hero__eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--gold); }
+
+  .hero__title {
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__text {
+    max-width: 560px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-on-dark-muted);
+  }
+
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+
+  .hero__media { flex: 1 1 300px; display: flex; justify-content: center; }
+
+  .hero__frame {
+    width: 100%;
+    max-width: 380px;
+    padding: 14px;
+    border: 1px solid rgba(176, 141, 87, 0.5);
+  }
+</style>

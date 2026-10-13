@@ -1,0 +1,97 @@
+---
+// Completa las respuestas entre corchetes antes de publicar.
+const faqs = [
+  {
+    q: '¿La primera consulta tiene costo?',
+    a: '[Respuesta del estudio: gratuita / costo referencial / se descuenta de los honorarios]',
+  },
+  {
+    q: '¿Atienden casos fuera de Lima?',
+    a: '[Respuesta del estudio sobre atención en provincias y consultas virtuales]',
+  },
+  {
+    q: '¿Qué documentos debo llevar a la consulta?',
+    a: 'Trae todo lo relacionado con tu caso: notificaciones, contratos, boletas, denuncias o resoluciones. Si no tienes nada a la mano, igual podemos orientarte.',
+  },
+  {
+    q: '¿Cómo se manejan los honorarios?',
+    a: '[Respuesta del estudio: modalidad de pago, por etapa, cuotas, etc.]',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<section id="faq" class="section faq">
+  <div class="container faq__inner">
+    <div class="faq__head">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2 class="section-title">Antes de tu consulta</h2>
+    </div>
+
+    <div class="faq__list">
+      {
+        faqs.map((f, i) => (
+          <details class="faq__item" open={i === 0}>
+            <summary class="faq__question">{f.q}</summary>
+            <p class="faq__answer">{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>
+
+<style>
+  .faq { background: var(--sand); }
+  .faq__inner { max-width: 860px; }
+
+  .faq__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .faq__list { border-top: 1px solid #d6d6d6; }
+  .faq__item { border-bottom: 1px solid #d6d6d6; }
+
+  .faq__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
+    padding: 24px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker { display: none; }
+
+  .faq__question::after {
+    content: '+';
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--gold-dark);
+  }
+
+  .faq__item[open] .faq__question::after { content: '−'; }
+
+  .faq__answer { padding-bottom: 24px; line-height: 1.7; color: var(--text-muted); }
+</style>

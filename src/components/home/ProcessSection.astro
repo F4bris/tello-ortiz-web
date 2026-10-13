@@ -1,0 +1,77 @@
+---
+const steps = [
+  {
+    title: 'Consulta inicial',
+    text: 'Escuchamos tu situación y revisamos los documentos que tengas para entender qué está en juego.',
+  },
+  {
+    title: 'Evaluación del caso',
+    text: 'Analizamos los hechos y el marco legal, y te explicamos con claridad tus opciones y riesgos.',
+  },
+  {
+    title: 'Estrategia y acompañamiento',
+    text: 'Definimos la estrategia y te mantenemos informado en cada etapa del proceso.',
+  },
+];
+---
+
+<section id="proceso" class="section process on-dark">
+  <div class="container">
+    <div class="process__head">
+      <span class="eyebrow">Cómo trabajamos</span>
+      <h2 class="section-title">Un proceso claro desde la primera consulta</h2>
+    </div>
+
+    <ol class="process__list">
+      {
+        steps.map((step, i) => (
+          <li class="step">
+            <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="step__title">{step.title}</h3>
+            <p class="step__text">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process { background: var(--navy-700); color: var(--text-on-dark); }
+
+  .process__head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 640px;
+    margin-bottom: 56px;
+  }
+
+  .process__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 40px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(201, 169, 116, 0.5);
+  }
+
+  .step__num {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--gold-light);
+  }
+
+  .step__title { font-family: var(--font-sans); font-size: 19px; font-weight: 700; }
+  .step__text { font-size: 15px; line-height: 1.65; color: #c9c9c9; }
+</style>

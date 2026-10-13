@@ -1,0 +1,85 @@
+---
+import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import { SITE } from '../../data/site';
+
+const values = [
+  { title: 'Integridad', text: 'Ética en cada decisión.' },
+  { title: 'Confidencialidad', text: 'Tu información, protegida.' },
+  { title: 'Rigor jurídico', text: 'Análisis detallado del caso.' },
+  { title: 'Justicia', text: 'Trato justo ante la ley.' },
+  { title: 'Vocación', text: 'Cercanía con cada cliente.' },
+];
+---
+
+<section id="nosotros" class="section about">
+  <div class="container about__inner">
+    <div class="about__media">
+      <PhotoPlaceholder label="Foto del Dr. Tello Ortiz en su despacho" />
+    </div>
+
+    <div class="about__content">
+      <span class="eyebrow">Sobre el estudio</span>
+      <h2 class="section-title">Litigio estratégico con más de 15 años de trayectoria</h2>
+      <p>
+        {SITE.name} es dirigido por el Dr. [Nombre completo] Tello Ortiz, abogado colegiado (CAL N.° [número]),
+        dedicado desde {SITE.foundingYear} a la defensa penal y procesal penal, con amplia experiencia en derecho
+        civil, registral inmobiliario, laboral y constitucional.
+      </p>
+      <p>
+        Cada caso es atendido directamente por el Dr. Tello Ortiz, de principio a fin: sin intermediarios, con
+        una estrategia honesta, rigurosa y explicada con claridad.
+      </p>
+      <a href="/contacto" class="link-underline about__link">Agenda una consulta con el Dr. Tello Ortiz</a>
+
+      <ul class="values">
+        {
+          values.map((v) => (
+            <li class="values__item">
+              <span class="values__title">{v.title}</span>
+              <span class="values__text">{v.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about { background: var(--white); }
+
+  .about__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 72px; }
+
+  .about__media { flex: 1 1 320px; min-width: 0; border-bottom: 4px solid var(--gold); }
+
+  .about__content {
+    flex: 999 1 520px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .about__content p { font-size: 17px; line-height: 1.75; color: #3a3a3a; }
+  .about__link { align-self: flex-start; }
+
+  .values {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    border-top: 1px solid var(--border);
+  }
+
+  .values__item { display: flex; flex-direction: column; gap: 6px; padding: 20px 16px 0 0; }
+
+  .values__title {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .values__text { font-size: 13px; color: #5a5a5a; }
+</style>
