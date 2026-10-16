@@ -1,0 +1,47 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  text?: string;
+}
+
+const { eyebrow, title, text } = Astro.props;
+---
+
+<section class="page-hero on-dark">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">{eyebrow}</span>
+    <h1 class="page-hero__title">{title}</h1>
+    {text && <p class="page-hero__text">{text}</p>}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    margin-top: calc(var(--header-h) * -1);
+    background: var(--navy);
+    color: var(--text-on-dark);
+  }
+
+  .page-hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-top: calc(clamp(72px, 10vw, 112px) + var(--header-h));
+    padding-bottom: clamp(72px, 10vw, 112px);
+  }
+
+  .page-hero__title {
+    max-width: 760px;
+    font-size: clamp(38px, 5.5vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+
+  .page-hero__text {
+    max-width: 620px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-on-dark-muted);
+  }
+</style>
