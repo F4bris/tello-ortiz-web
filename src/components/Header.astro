@@ -47,12 +47,23 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
 </header>
 
 <style>
-  .header {
+   .header {
     position: sticky;
     top: 0;
     z-index: 50;
     background: var(--navy);
     border-bottom: 1px solid rgba(176, 141, 87, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Se oculta al bajar */
+  .header.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  /* Sombra cuando ya no está arriba del todo */
+  .header.is-scrolled {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   }
 
   .header__nav {
@@ -128,6 +139,11 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     transition: transform 0.2s, opacity 0.2s;
   }
 
+   @media (prefers-reduced-motion: reduce) {
+    .header {
+      transition: none;
+    }
+  }
   @media (max-width: 860px) {
     .header__toggle { display: flex; }
 
@@ -163,6 +179,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
 </style>
 
 <script>
+  const header = document.querySelector<HTMLElement>('.header');
   const toggle = document.querySelector<HTMLButtonElement>('.header__toggle');
   const menu = document.getElementById('menu-principal');
 
@@ -172,4 +189,38 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
     menu?.classList.toggle('is-open', !open);
   });
+
+  let lastY = window.scrollY;
+  let ticking = false;
+  const TOLERANCE = 8; 
+
+  const updateHeader = () => {
+    const y = window.scrollY;
+    const delta = y - lastY;
+    const menuOpen = toggle?.getAttribute('aria-expanded') === 'true';
+
+    header?.classList.toggle('is-scrolled', y > 0);
+
+    if (y <= (header?.offsetHeight ?? 80) || menuOpen) {
+      header?.classList.remove('is-hidden');
+    } else if (Math.abs(delta) > TOLERANCE) {
+      header?.classList.toggle('is-hidden', delta > 0);
+    }
+
+    if (Math.abs(delta) > TOLERANCE) lastY = y;
+    ticking = false;
+  };
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
+
+  header?.addEventListener('focusin', () => header.classList.remove('is-hidden'));
 </script>
