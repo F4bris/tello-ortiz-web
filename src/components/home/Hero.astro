@@ -42,6 +42,7 @@ import { Image } from 'astro:assets';
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    margin-top: calc(var(--header-h) * -1); /* sube el hero hasta el borde superior */
     color: var(--text-on-dark);
     background:
       radial-gradient(ellipse 55% 70% at 80% 35%, rgba(176, 141, 87, 0.2), transparent 65%),
@@ -69,7 +70,8 @@ import { Image } from 'astro:assets';
     flex-wrap: wrap;
     align-items: center;
     gap: 64px;
-    padding-block: clamp(80px, 12vw, 128px);
+    padding-top: calc(clamp(80px, 12vw, 128px) + var(--header-h));
+    padding-bottom: clamp(80px, 12vw, 128px);
   }
 
   .hero__content {
