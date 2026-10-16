@@ -1,5 +1,7 @@
 ---
-import { SITE, SPECIALTIES } from '../data/site';
+import { SITE, SPECIALTIES, whatsappUrl } from '../data/site';
+
+const formKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
 ---
 
 <section id="contacto" class="section contact on-dark">
@@ -8,7 +10,7 @@ import { SITE, SPECIALTIES } from '../data/site';
       <span class="eyebrow">Contacto</span>
       <h2 class="section-title">Cuéntanos tu caso. Te orientamos sobre los siguientes pasos.</h2>
       <p class="contact__lead">
-        Completa el formulario y te responderemos por WhatsApp a la brevedad, o escríbenos directamente.
+        Completa el formulario y nos pondremos en contacto contigo a la brevedad, o escríbenos directamente.
       </p>
 
       <dl class="contact__data">
@@ -32,56 +34,85 @@ import { SITE, SPECIALTIES } from '../data/site';
       </dl>
     </div>
 
-    <!-- Sin backend: al enviar, arma el mensaje y abre WhatsApp -->
-    <form class="form" id="contact-form" data-whatsapp={SITE.whatsapp[0].number} novalidate>
-      <h3 class="form__title">Solicita tu consulta</h3>
+    <div class="contact__panel">
+      <form class="form" id="contact-form" data-key={formKey} novalidate>
+        <h3 class="form__title">Solicita tu consulta</h3>
 
-      <div class="form__row">
-        <div class="form__field">
-          <label for="nombre">Nombre completo</label>
-          <input id="nombre" type="text" name="nombre" autocomplete="name" required minlength="3"
-            aria-describedby="nombre-error" data-error="Ingresa tu nombre completo." />
-          <p class="form__error" id="nombre-error" aria-live="polite"></p>
+        <div class="form__row">
+          <div class="form__field">
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" type="text" name="nombre" autocomplete="name" required minlength="3"
+              aria-describedby="nombre-error" data-error="Ingresa tu nombre completo." />
+            <p class="form__error" id="nombre-error" aria-live="polite"></p>
+          </div>
+          <div class="form__field">
+            <label for="telefono">Teléfono / WhatsApp</label>
+            <input id="telefono" type="tel" name="telefono" autocomplete="tel" inputmode="tel" required
+              pattern="^(\+?51)?\s?9\d{2}\s?\d{3}\s?\d{3}$" placeholder="9XX XXX XXX"
+              aria-describedby="telefono-error" data-error="Ingresa un celular válido de 9 dígitos." />
+            <p class="form__error" id="telefono-error" aria-live="polite"></p>
+          </div>
         </div>
+
         <div class="form__field">
-          <label for="telefono">Teléfono / WhatsApp</label>
-          <input id="telefono" type="tel" name="telefono" autocomplete="tel" inputmode="tel" required
-            pattern="^(\+?51)?\s?9\d{2}\s?\d{3}\s?\d{3}$" placeholder="9XX XXX XXX"
-            aria-describedby="telefono-error" data-error="Ingresa un celular válido de 9 dígitos." />
-          <p class="form__error" id="telefono-error" aria-live="polite"></p>
+          <label for="area">Área de tu caso</label>
+          <select id="area" name="area" required aria-describedby="area-error" data-error="Selecciona un área.">
+            <option value="" disabled selected>Selecciona una opción</option>
+            {SPECIALTIES.map((s) => <option>{s.title}</option>)}
+            <option>No estoy seguro</option>
+          </select>
+          <p class="form__error" id="area-error" aria-live="polite"></p>
         </div>
-      </div>
 
-      <div class="form__field">
-        <label for="area">Área de tu caso</label>
-        <select id="area" name="area" required aria-describedby="area-error" data-error="Selecciona un área.">
-          <option value="" disabled selected>Selecciona una opción</option>
-          {SPECIALTIES.map((s) => <option>{s.title}</option>)}
-          <option>No estoy seguro</option>
-        </select>
-        <p class="form__error" id="area-error" aria-live="polite"></p>
-      </div>
+        <div class="form__field">
+          <label for="mensaje">Cuéntanos brevemente <span class="form__optional">(opcional)</span></label>
+          <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+        </div>
 
-      <div class="form__field">
-        <label for="mensaje">Cuéntanos brevemente <span class="form__optional">(opcional)</span></label>
-        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
-      </div>
+        <div class="form__field">
+          <label class="form__check">
+            <input type="checkbox" name="consentimiento" required aria-describedby="consentimiento-error"
+              data-error="Debes aceptar la Política de Privacidad para continuar." />
+            <span>
+              Acepto la <a href="/politica-de-privacidad">Política de Privacidad</a> y el tratamiento de mis datos
+              personales conforme a la Ley N.° 29733.
+            </span>
+          </label>
+          <p class="form__error" id="consentimiento-error" aria-live="polite"></p>
+        </div>
 
-      <div class="form__field">
-        <label class="form__check">
-          <input type="checkbox" name="consentimiento" required aria-describedby="consentimiento-error"
-            data-error="Debes aceptar la Política de Privacidad para continuar." />
-          <span>
-            Acepto la <a href="/politica-de-privacidad">Política de Privacidad</a> y el tratamiento de mis datos
-            personales conforme a la Ley N.° 29733.
-          </span>
-        </label>
-        <p class="form__error" id="consentimiento-error" aria-live="polite"></p>
-      </div>
+        <!-- Trampa anti-spam: los bots la marcan, las personas no la ven -->
+        <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-      <button type="submit" class="btn btn--dark form__submit">Solicitar consulta</button>
-      <p class="form__note">Tu información es confidencial y solo se usa para responder tu consulta.</p>
-    </form>
+        <button type="submit" class="btn btn--dark form__submit">
+          <span class="form__spinner" aria-hidden="true"></span>
+          <span class="form__submit-text">Solicitar consulta</span>
+        </button>
+
+        <p class="form__alert" id="form-alert" role="alert" hidden>
+          No pudimos enviar tu solicitud. Inténtalo nuevamente o
+          <a href={whatsappUrl()} target="_blank" rel="noopener">escríbenos por WhatsApp</a>.
+        </p>
+
+        <p class="form__note">Tu información es confidencial y solo se usa para responder tu consulta.</p>
+      </form>
+
+      <div class="success" id="form-success" tabindex="-1" hidden>
+        <span class="success__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        </span>
+        <h3 class="success__title">¡Solicitud enviada!</h3>
+        <p class="success__text">
+          Gracias, <strong id="success-name"></strong>. Recibimos tu consulta y nos pondremos en
+          contacto contigo a la brevedad al número que nos indicaste.
+        </p>
+        <p class="success__hint">
+          ¿Es urgente? <a href={whatsappUrl()} target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.
+        </p>
+        <button type="button" class="success__reset" id="form-reset">Enviar otra consulta</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -122,15 +153,15 @@ import { SITE, SPECIALTIES } from '../data/site';
   .contact__data dd { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
   .contact__data a { text-decoration: none; }
 
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  .contact__panel {
     padding: clamp(28px, 4vw, 44px);
     background: var(--gray-100);
     color: var(--text);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
   }
+
+  .form { display: flex; flex-direction: column; gap: 20px; }
+  .form[hidden] { display: none; }
 
   .form__title { font-size: 28px; color: var(--navy); margin-bottom: 4px; }
 
@@ -142,7 +173,7 @@ import { SITE, SPECIALTIES } from '../data/site';
 
   .form__field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
 
-  .form__field input,
+  .form__field input:not([type='checkbox']),
   .form__field select,
   .form__field textarea {
     width: 100%;
@@ -156,7 +187,7 @@ import { SITE, SPECIALTIES } from '../data/site';
     font-weight: 400;
   }
 
-  .form__field input:focus,
+  .form__field input:not([type='checkbox']):focus,
   .form__field select:focus,
   .form__field textarea:focus {
     border-color: var(--gold);
@@ -166,15 +197,13 @@ import { SITE, SPECIALTIES } from '../data/site';
 
   .form__field textarea { resize: vertical; }
 
-  /* Evita el fondo azul del autocompletado del navegador */
-  .form__field input:-webkit-autofill {
+  .form__field input:not([type='checkbox']):-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
     -webkit-text-fill-color: var(--text);
   }
 
   .form__optional { font-weight: 400; color: #6a6a6a; }
 
-  /* ===== Errores de validación ===== */
   .form__error {
     display: none;
     align-items: center;
@@ -195,16 +224,10 @@ import { SITE, SPECIALTIES } from '../data/site';
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 7v6M12 17h.01'/%3E%3C/svg%3E") center / contain no-repeat;
   }
 
-  .form__error:not(:empty) { display: flex; animation: error-in 0.2s ease-out; }
+  .form__error:not(:empty) { display: flex; animation: fade-in 0.2s ease-out; }
 
-  .form__field [aria-invalid='true'] { border-color: #a23b2a; background: #fdf6f4; }
-  .form__field [aria-invalid='true']:focus { box-shadow: 0 0 0 3px rgba(162, 59, 42, 0.15); }
-  .form__check input[aria-invalid='true'] { outline: 2px solid #a23b2a; outline-offset: 2px; }
-
-  @keyframes error-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: none; }
-  }
+  .form__field [aria-invalid='true']:not([type='checkbox']) { border-color: #a23b2a; background: #fdf6f4; }
+  .form__field [aria-invalid='true']:not([type='checkbox']):focus { box-shadow: 0 0 0 3px rgba(162, 59, 42, 0.15); }
 
   .form__check {
     display: flex;
@@ -224,7 +247,85 @@ import { SITE, SPECIALTIES } from '../data/site';
   }
 
   .form__submit { width: 100%; }
+  .form__submit:disabled { opacity: 0.75; cursor: wait; }
+
+  .form__spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(243, 243, 243, 0.35);
+    border-top-color: var(--text-on-dark);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .form.is-sending .form__spinner { display: inline-block; }
+
+  .form__alert {
+    margin: 0;
+    padding: 12px 14px;
+    border-left: 3px solid #a23b2a;
+    background: #fdf6f4;
+    font-size: 13px;
+    color: #7a2c1f;
+  }
+
+  .form__alert[hidden] { display: none; }
+  .form__alert a { font-weight: 700; }
+
   .form__note { font-size: 12px; color: #5a5a5a; text-align: center; }
+
+  .success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding-block: 48px;
+    text-align: center;
+    animation: fade-in 0.35s ease-out;
+  }
+
+  .success[hidden] { display: none; }
+  .success:focus { outline: none; }
+
+  .success__icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(176, 141, 87, 0.12);
+    color: var(--gold-dark);
+  }
+
+  .success__title { font-size: 32px; color: var(--navy); }
+  .success__text { max-width: 400px; line-height: 1.7; color: var(--text-muted); }
+  .success__hint { font-size: 14px; color: #5a5a5a; }
+  .success__hint a { font-weight: 700; color: var(--navy); }
+
+  .success__reset {
+    margin-top: 8px;
+    padding: 8px;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-dark);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 
   @media (max-width: 960px) {
     .contact__inner { grid-template-columns: 1fr; gap: 48px; }
@@ -237,11 +338,13 @@ import { SITE, SPECIALTIES } from '../data/site';
 </style>
 
 <script>
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-
   type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-  // Muestra u oculta el mensaje de error de un campo
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const success = document.getElementById('form-success');
+  const alertBox = document.getElementById('form-alert');
+  const resetBtn = document.getElementById('form-reset');
+
   const validateField = (field: Field) => {
     const error = document.getElementById(`${field.name}-error`);
     if (!error) return true;
@@ -252,13 +355,20 @@ import { SITE, SPECIALTIES } from '../data/site';
     return valid;
   };
 
-  if (form) {
+  if (form && success) {
     const fields = Array.from(form.querySelectorAll<Field>('[required]'));
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const submitText = form.querySelector<HTMLElement>('.form__submit-text')!;
 
-    // Revalida mientras el usuario corrige, solo si el campo ya mostró error
+    const setSending = (sending: boolean) => {
+      form.classList.toggle('is-sending', sending);
+      submitBtn.disabled = sending;
+      submitText.textContent = sending ? 'Enviando…' : 'Solicitar consulta';
+    };
+
     fields.forEach((field) => {
-      const event = field.type === 'checkbox' || field.tagName === 'SELECT' ? 'change' : 'input';
-      field.addEventListener(event, () => {
+      const eventName = field.type === 'checkbox' || field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(eventName, () => {
         if (field.getAttribute('aria-invalid') === 'true') validateField(field);
       });
       field.addEventListener('blur', () => {
@@ -266,8 +376,9 @@ import { SITE, SPECIALTIES } from '../data/site';
       });
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (alertBox) alertBox.hidden = true;
 
       const invalid = fields.filter((field) => !validateField(field));
       if (invalid.length) {
@@ -276,17 +387,48 @@ import { SITE, SPECIALTIES } from '../data/site';
       }
 
       const data = new FormData(form);
-      const text = [
-        'Hola, quisiera agendar una consulta.',
-        `Nombre: ${data.get('nombre')}`,
-        `Teléfono: ${data.get('telefono')}`,
-        `Área: ${data.get('area')}`,
-        data.get('mensaje') ? `Detalle: ${data.get('mensaje')}` : '',
-      ]
-        .filter(Boolean)
-        .join('\n');
+      const nombre = String(data.get('nombre') ?? '').trim();
 
-      window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+      setSending(true);
+
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: form.dataset.key,
+            subject: `Nueva consulta web: ${data.get('area')}`,
+            from_name: 'Web Tello Ortiz',
+            botcheck: data.get('botcheck') ? true : '',
+            Nombre: nombre,
+            Teléfono: data.get('telefono'),
+            Área: data.get('area'),
+            Mensaje: data.get('mensaje') || '—',
+          }),
+        });
+
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message);
+
+        const nameEl = document.getElementById('success-name');
+        if (nameEl) nameEl.textContent = nombre.split(' ')[0];
+        form.reset();
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      } catch (error) {
+        console.error('Error al enviar el formulario:', error);
+        if (alertBox) alertBox.hidden = false;
+      } finally {
+        setSending(false);
+      }
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      success.hidden = true;
+      form.hidden = false;
+      fields.forEach((field) => field.removeAttribute('aria-invalid'));
+      form.querySelector<HTMLInputElement>('#nombre')?.focus();
     });
   }
 </script>
