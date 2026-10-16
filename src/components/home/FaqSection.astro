@@ -19,6 +19,7 @@ const faqs = [
   },
 ];
 
+// Datos estructurados para que Google pueda mostrar las preguntas en los resultados
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -37,12 +38,17 @@ const schema = {
       <h2 class="section-title">Antes de tu consulta</h2>
     </div>
 
-    <div class="faq__list">
+    <div class="faq__list" data-accordion>
       {
         faqs.map((f, i) => (
           <details class="faq__item" open={i === 0}>
-            <summary class="faq__question">{f.q}</summary>
-            <p class="faq__answer">{f.a}</p>
+            <summary class="faq__question">
+              {f.q}
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <div class="faq__content">
+              <p class="faq__answer">{f.a}</p>
+            </div>
           </details>
         ))
       }
@@ -80,18 +86,89 @@ const schema = {
     color: var(--navy);
     cursor: pointer;
     list-style: none;
+    transition: color 0.2s;
   }
 
   .faq__question::-webkit-details-marker { display: none; }
+  .faq__question:hover { color: var(--gold-dark); }
 
-  .faq__question::after {
-    content: '+';
-    font-size: 24px;
-    font-weight: 400;
+  /* Ícono + que gira y se convierte en − */
+  .faq__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
     color: var(--gold-dark);
   }
 
-  .faq__item[open] .faq__question::after { content: '−'; }
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.35s ease;
+  }
+
+  .faq__icon::after { transform: rotate(90deg); }
+  .faq__item[open] .faq__icon::after { transform: rotate(0deg); }
+
+  .faq__content { overflow: hidden; }
 
   .faq__answer { padding-bottom: 24px; line-height: 1.7; color: var(--text-muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__icon::before,
+    .faq__icon::after { transition: none; }
+  }
 </style>
+
+<script>
+  const DURATION = 350;
+  const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Anima la altura del contenido entre dos valores
+  const animateHeight = (el: HTMLElement, from: number, to: number) =>
+    el.animate([{ height: `${from}px` }, { height: `${to}px` }], {
+      duration: reduceMotion ? 0 : DURATION,
+      easing: EASING,
+    }).finished;
+
+  const openItem = async (item: HTMLDetailsElement) => {
+    const content = item.querySelector<HTMLElement>('.faq__content')!;
+    item.open = true;
+    await animateHeight(content, 0, content.scrollHeight);
+  };
+
+  const closeItem = async (item: HTMLDetailsElement) => {
+    const content = item.querySelector<HTMLElement>('.faq__content')!;
+    item.dataset.closing = 'true';
+    await animateHeight(content, content.offsetHeight, 0);
+    item.open = false;
+    delete item.dataset.closing;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-accordion]').forEach((accordion) => {
+    const items = Array.from(accordion.querySelectorAll<HTMLDetailsElement>('.faq__item'));
+
+    items.forEach((item) => {
+      item.querySelector('summary')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (item.dataset.closing) return;
+
+        if (item.open) {
+          closeItem(item);
+          return;
+        }
+
+        // Cierra la que esté abierta antes de abrir la nueva
+        items.filter((other) => other !== item && other.open).forEach(closeItem);
+        openItem(item);
+      });
+    });
+  });
+</script>
